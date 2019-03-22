@@ -2,7 +2,7 @@ import sys
 import numpy as np
 
 from sklearn.ensemble import GradientBoostingClassifier
-from logic.feature_modeling import reguting_features,polarity_feature,generate_or_load_feats,hand_features
+from logic.feature_modeling import refuting_features,polarity_feature,generate_or_load_feats,hand_features
 from logic.feature_modeling import word_overlap_features
 from util_files.datasets import Datasets
 from util_files.generate_splits import kfold_split,get_stances_4_folds
@@ -18,7 +18,12 @@ def generate_features(stances, dataset, name ):
         h.append(stance['Headline'])
         b.append(dataset.articles[stance['Body id']])
 
+    x_overlap = generate_or_load_feats(word_overlap_features, h, b, "feaures/refuting."+name+".npy")
+    x_refuting = generate_or_load_feats(refuting_features, h, b, "features/refuting."+name+".npy")
+    x_polarity = generate_or_load_feats()
 
+    X = np.c_
+    return  X,y
 
 #Generate folds
 if __name__ == "__main__":
@@ -48,9 +53,30 @@ if __name__ == "__main__":
         del ids[fold]
 
         X_train = np.vstack(tuple([Xs[i] for i in ids]))
-        Y_train = np.stack(tuple(Ys[i] for i in ids))
+        Y_train = np.hstack(tuple([Ys[i] for i in ids]))
 
         x_demo = Xs[fold]
         Y_demo = Ys[fold]
 
+        classifier = GradientBoostingClassifier(n_estimaters=200, random_state=14128, verbose=True)
+        classifier.fit(X_train, Y_train)
 
+        predicted_result = [LABELS[int(n)] for n in classifier.predict(X_demo)]
+        actual_result = [LABELS[int(n)] for n in Y_demo ]
+
+        fold_score, _ = submit_score(actual_result, predicted_result)
+        max_fold_score, _ =submit_score(actual_result, actual_result);
+
+        weigthted_score = fold_score/max_fold_score
+
+        print(str(fold) + "is Fold score initialy was" + str(weigthted_score))
+        if weigthted_score > best_score:
+            best_score = weigthted_score
+            best_score = classifier
+
+
+    #report the  final best_score
+    predicted = [LABELS[int (n)] for n in best_fold.predict(X_holdout)]
+    actual_result = [LABELS(int (n)) for n in Y_demo]
+
+    report_score(actual_result, predicted)

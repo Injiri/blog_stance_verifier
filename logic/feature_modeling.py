@@ -44,7 +44,7 @@ def word_overlap_features(headlines, bodies):
         X.append(featurez)
 
 
-def reguting_features(headlines, bodies):
+def refuting_features(headlines, bodies):
     _refuting_words = [
         'fake',
         'not',
