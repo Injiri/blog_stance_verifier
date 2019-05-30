@@ -2,7 +2,7 @@ import sys
 import numpy as np
 
 from sklearn.ensemble import GradientBoostingClassifier
-from logic.feature_modeling import refuting_features,polarity_feature,generate_or_load_feats,hand_features
+from logic.feature_modeling import refuting_features,polarity_feature,generate_or_load_feats,handle_features
 from logic.feature_modeling import word_overlap_features
 from util_files.datasets import Datasets
 from util_files.generate_splits import kfold_split,get_stances_4_folds
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     fold_stances, hold_out_stances = get_stances_4_folds(my_dataset,folds,hold_out)
 
     demo_dateset = Datasets("Demo /test")
-    X_demo, Y_demo = generate_features(demo_dateset.stances, demo_dateset, "demo")
+    X_demo, Y_test = generate_features(demo_dateset.stances, demo_dateset, "demo")
 
     Xs = dict()
     Ys = dict()
@@ -55,14 +55,14 @@ if __name__ == "__main__":
         X_train = np.vstack(tuple([Xs[i] for i in ids]))
         Y_train = np.hstack(tuple([Ys[i] for i in ids]))
 
-        x_demo = Xs[fold]
-        Y_demo = Ys[fold]
+        X_test = Xs[fold]
+        Y_test = Ys[fold]
 
         classifier = GradientBoostingClassifier(n_estimaters=200, random_state=14128, verbose=True)
         classifier.fit(X_train, Y_train)
 
         predicted_result = [LABELS[int(n)] for n in classifier.predict(X_demo)]
-        actual_result = [LABELS[int(n)] for n in Y_demo ]
+        actual_result = [LABELS[int(n)] for n in Y_test]
 
         fold_score, _ = submit_score(actual_result, predicted_result)
         max_fold_score, _ =submit_score(actual_result, actual_result);
@@ -77,6 +77,6 @@ if __name__ == "__main__":
 
     #report the  final best_score
     predicted = [LABELS[int (n)] for n in best_fold.predict(X_holdout)]
-    actual_result = [LABELS(int (n)) for n in Y_demo]
+    actual_result = [LABELS(int (n)) for n in Y_test]
 
     report_score(actual_result, predicted)

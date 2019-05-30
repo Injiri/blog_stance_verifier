@@ -17,6 +17,7 @@ def get_tokenized_lemmas(s):
 
 
 def clean(s):
+    #at this point can perfom a regex to eliminate some parts of the text that arent useful at all by re.findall method
     return " ".join(re.findall(r'\w+', s, flag=re.UNICODE)).lower()
 
 
@@ -62,12 +63,13 @@ def refuting_features(headlines, bodies):
         'doubts'
 
     ]
+    # for each word, enumerate its features.
     X = []
     for i, (headline, body) in tqdm(enumerate(zip(headlines, bodies))):
         clean_headline = clean(headline)
-        clea_headline = get_tokenized_lemmas(clean_headline)
-        featurez = [1 if word in clean_headline else 0 for word in _refuting_words]
-        X.append(featurez)
+        clean_headline = get_tokenized_lemmas(clean_headline)
+        features = [1 if word in clean_headline else 0 for word in _refuting_words]
+        X.append(features)
     return X
 
 
@@ -104,7 +106,7 @@ def polarity_feature(headlines, bodies):
     return np.array(X)
 
 
-def ngrams(imput, n):
+def n_grams(input, n):
     input = input.split(' ')
     output = []
     for i in range(len(input) - n + 1):
@@ -119,7 +121,7 @@ def chargrams(input, n):
     return output
 
 
-def append_chargrams(features, text_headline, text_body, size):
+def append_char_grams(features, text_headline, text_body, size):
     grams = [' '.join(x) for x in chargrams(" ".join(remove_stopwords(text_headline.split())), size)]
     grams_hits = 0
     grams_early_hits = 0
@@ -134,8 +136,8 @@ def append_chargrams(features, text_headline, text_body, size):
     return features
 
 
-def append_ngrams(features, text_headline, text_body, size):
-    grams = [' '.join(x) for x in ngrams(text_headline, size)]
+def append_n_grams(features, text_headline, text_body, size):
+    grams = [' '.join(x) for x in n_grams(text_headline, size)]
     grams_hits_count = 0
     body_grams_hit = 0
     for gram in grams:
@@ -148,7 +150,7 @@ def append_ngrams(features, text_headline, text_body, size):
     return features
 
 
-def hand_features(headlines, bodies):
+def handle_features(headlines, bodies):
     def binary_co_occurance(headline, body):
         token_count = 0
         body_token_count = 0
@@ -170,24 +172,19 @@ def hand_features(headlines, bodies):
     def count_grams(headline, body):
         clean_body = clean(body)
         clean_headline = clean(headline)
-        featurez = []
-        featurez = append_chargrams(featurez, clean_headline, clean_body, 2)
-        featurz = append_chargrams(featurez, clean_headline, clean_body, 8)
-        featurez = append_chargrams(featurez, clean_headline, clean_body, 4)
-        featurez = append_chargrams(featurez, clean_headline, clean_body, 16)
-        featurez = append_ngrams(featurez, clean_headline, clean_body, 2)
-        featurez = append_ngrams(featurez, clean_headline, clean_body);
-        featurez = append_ngrams(featurez, clean_headline, clean_body, 3)
-        featurez = append_ngrams(featurz, clean_headline, clean_body, 4)
-        return featurez
+        features = []
+        features = append_char_grams(features, clean_headline, clean_body, 2)
+        features = append_char_grams(features, clean_headline, clean_body, 8)
+        features = append_char_grams(features, clean_headline, clean_body, 4)
+        features = append_char_grams(features, clean_headline, clean_body, 16)
+        features = append_n_grams(features, clean_headline, clean_body, 2)
+        features = append_n_grams(features, clean_headline, clean_body);
+        features = append_n_grams(features, clean_headline, clean_body, 3)
+        features = append_n_grams(features, clean_headline, clean_body, 4)
+        return features
 
     X = []
     for i, (headline, body) in tqdm(enumerate(zip(headlines, bodies))):
         X.append(binary_co_occurance(headline, body) + binary_occurence_stops(headline, body)
                  + count_grams(headline, body))
     return X
-
-
-
-
-
