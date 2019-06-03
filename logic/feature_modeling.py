@@ -5,7 +5,7 @@ import numpy as np
 from sklearn import feature_extraction
 from tqdm import tqdm
 
-_wnl = nltk.wordNetTokenizer()
+_wnl = nltk.WordNetLemmatizer();
 
 
 def normalize_word(w):
@@ -17,7 +17,7 @@ def get_tokenized_lemmas(s):
 
 
 def clean(s):
-    #at this point can perfom a regex to eliminate some parts of the text that arent useful at all by re.findall method
+    # at this point can perfom a regex to eliminate some parts of the text that arent useful at all by re.findall method
     return " ".join(re.findall(r'\w+', s, flag=re.UNICODE)).lower()
 
 
@@ -36,13 +36,13 @@ def generate_or_load_feats(feat_fn, headlines, bodies, feature_file):
 def word_overlap_features(headlines, bodies):
     X = []
     for i, (headline, body) in tqdm(enumerate(zip(headlines, bodies))):
-        clearn_headline = clean(headline)
+        clean_headline = clean(headline)
         clean_body = clean(body)
         clean_headline = get_tokenized_lemmas(clean_body)
-        featurez = [
+        features = [
             len(set(clean_headline).intersection(clean_body) / float(len(set(clean_headline).union(clean_body))))
         ]
-        X.append(featurez)
+        X.append(features)
 
 
 def refuting_features(headlines, bodies):
@@ -106,11 +106,11 @@ def polarity_feature(headlines, bodies):
     return np.array(X)
 
 
-def n_grams(input, n):
+def n_grams(input, input_size):
     input = input.split(' ')
     output = []
-    for i in range(len(input) - n + 1):
-        output.append(input[i:i + n])
+    for i in range(len(input) - input_size + 1):
+        output.append(input[i:i + input_size])
     return output
 
 

@@ -34,20 +34,22 @@ if __name__ == "__main__":
     folds,hold_out = kfold_split(my_dataset,n_folds=10)
     fold_stances, hold_out_stances = get_stances_4_folds(my_dataset,folds,hold_out)
 
-    demo_dateset = Datasets("Demo /test")
-    X_demo, Y_test = generate_features(demo_dateset.stances, demo_dateset, "demo")
+    demo_dataset = Datasets("Demo /test")
+    X_demo, Y_test = generate_features(demo_dataset.stances, demo_dataset, "demo")
 
     Xs = dict()
     Ys = dict()
 
-    #populat all features
+    #populate all features
     X_holdout,y_holdout = generate_features(hold_out_stances, my_dataset,"holder")
     for fold in fold_stances:
-        Xs[fold],Ys[fold] = generate_features(fold_stances[fold] , demo_dateset ,str(fold))
+        Xs[fold],Ys[fold] = generate_features(fold_stances[fold], demo_dataset, str(fold))
 
     best_score = 0
     best_fold = None
 
+
+#perform classification for each fold
     for fold in fold_stances:
         ids = list(range(len(folds)))
         del ids[fold]

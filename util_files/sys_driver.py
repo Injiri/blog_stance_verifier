@@ -11,12 +11,12 @@ def parameter_parser():
     dir = "sysFeatures"
     for f in os.listdir(dir):
         if re.search('\.npy$', f):
-            fname = os.path.join(dir, f)
-            os.remove(fname)
+            filename = os.path.join(dir, f)
+            os.remove(filename)
     for f in ['hold_out_ids.txt', 'training_ids.txt']:
-        fname = os.path.join('splits_data', f)
-        if os.path.isfile(fname):
-            os.remove(fname)
+        filename = os.path.join('splits_data', f)
+        if os.path.isfile(filename):
+            os.remove(filename)
     print("All cleard")
 
 
