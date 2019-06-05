@@ -3,3 +3,7 @@ sklearn
 numpy
 scipy
 nltk
+flask
+pandas
+gunicorn
+xgboost
