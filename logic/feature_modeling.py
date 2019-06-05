@@ -13,12 +13,12 @@ def normalize_word(w):
 
 
 def get_tokenized_lemmas(s):
-    return [normalize_word(t) for t in nltk.word_torkenize(s)]
+    return [normalize_word(t) for t in nltk.word_tokenize(s)]
 
 
 def clean(s):
     # at this point can perfom a regex to eliminate some parts of the text that arent useful at all by re.findall method
-    return " ".join(re.findall(r'\w+', s, flag=re.UNICODE)).lower()
+    return " ".join(re.findall(r'\w+', s, flags=re.UNICODE)).lower()
 
 
 def remove_stopwords(l):
@@ -38,11 +38,13 @@ def word_overlap_features(headlines, bodies):
     for i, (headline, body) in tqdm(enumerate(zip(headlines, bodies))):
         clean_headline = clean(headline)
         clean_body = clean(body)
-        clean_headline = get_tokenized_lemmas(clean_body)
+        clean_headline = get_tokenized_lemmas(clean_headline)
+        clean_body = get_tokenized_lemmas(clean_body)
         features = [
-            len(set(clean_headline).intersection(clean_body) / float(len(set(clean_headline).union(clean_body))))
+            len(set(clean_headline).intersection(clean_body)) / float(len(set(clean_headline).union(clean_body)))
         ]
         X.append(features)
+    return X
 
 
 def refuting_features(headlines, bodies):

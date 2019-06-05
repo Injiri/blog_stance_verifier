@@ -1,4 +1,4 @@
-LABELS = ['agree', 'disgree', 'discuss', 'unrelated']
+LABELS = ['agree', 'disagree', 'discuss', 'unrelated']
 LABELS_RELATED = ['unrelated', 'realted']
 RELATED = LABELS[0:3]
 

@@ -1,8 +1,8 @@
 from csv import DictReader
 
 
-class Datasets():
-    def _init_(self, path="data"):
+class datasets():
+    def __init__(self, path="./data"):
         self.path = path
 
         print("start reading dataset")
@@ -14,11 +14,11 @@ class Datasets():
         # make an arra of all articles
         self.articles = dict()
 
-        for t in self.stances:
-            t['Body id'] = int(t['Body id'])
-
+        for stance in self.stances:
+            stance['Body ID'] = int(stance['Body ID'])
+#makes body id aninteger value
         for article in articles:
-            self.articles[int([article["Body id"]])] = article['articleBody']
+            self.articles[int(article["Body ID"])] = article['articleBody']
 
         print("Total stances" + str(len(self.stances)))
         print("Total Articles:" + str(len(self.articles)))
