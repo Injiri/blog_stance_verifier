@@ -1,10 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+form {
+    margin: auto;
+    width: 65%;
+}
+.result {
+    margin: auto;
+    width: 35%;
+    border: 1px solid #ccc;
+}
+</style>
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>False stance Detection on Micro-blogging sites </title>
 </head>
 <body>
+<form action="{{ url_for('main')}}" method="POST">
+
+   <fieldset>
+        <legend>False stance detection on micro-blogging sites </legend>
+        Blog Url:
+        <input name="url" required>
+        <br>
+        <input type="submit">
+    </fieldset>
+    <br>
+</form>
+<br>
+<div class="result" align="center">
+     {% if result %}
+        {% for variable, value in input_variable.items() %}
+            <b>{{ variable }}</b> : {{ value }}
+        {% endfor %}
+        <br>
+        <br> Predicted number of false stance in use:
+           <p style="font-size:50px">{{ result }}</p>
+    {% endif %}
+</div>
 
 </body>
 </html>
